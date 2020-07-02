@@ -456,6 +456,17 @@ func ReadPacket(r io.Reader, expectedCookie []byte) ([]Record, error) {
 	return records, err
 }
 
+// BigCookie a workaround to get a big value
+// Return a big value
+func BigCookie() uint32 {
+	for {
+		bigv := uint32(rand.Int63())
+		if bigv > 100000000 {
+			return bigv
+		}
+	}
+}
+
 // WritePacket creates a BINRPC packet (header and payload) containing values v, and writes it to w.
 // It returns the cookie generated, or an error if one occurred.
 func WritePacket(w io.Writer, values ...interface{}) ([]byte, error) {
@@ -478,7 +489,7 @@ func WritePacket(w io.Writer, values ...interface{}) ([]byte, error) {
 		}
 	}
 
-	cookie := uint32(rand.Int63())
+	cookie := BigCookie()
 
 	sizeOfLength, totalLength := getMinBinarySizeOfInt(payload.Len())
 	sizeOfCookie := binary.Size(cookie)
